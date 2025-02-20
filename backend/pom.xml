@@ -12,7 +12,7 @@
 	<artifactId>DsCatalog</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<name>DsCatalog</name>
-	<description>Demo project for Spring Boot</description>
+	<description>DSCatalog Project</description>
 	<url/>
 	<licenses>
 		<license/>
@@ -58,6 +58,10 @@
 
 	<build>
 		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-resources-plugin</artifactId> <!--$NO-MVN-MAN-VER$ -->
+			</plugin>
 			<plugin>
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-maven-plugin</artifactId>
