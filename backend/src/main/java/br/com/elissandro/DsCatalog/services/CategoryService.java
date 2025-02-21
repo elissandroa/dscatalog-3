@@ -11,7 +11,7 @@ import org.springframework.transaction.annotation.Transactional;
 import br.com.elissandro.DsCatalog.dto.CategoryDTO;
 import br.com.elissandro.DsCatalog.entities.Category;
 import br.com.elissandro.DsCatalog.repositories.CategoryRepository;
-import br.com.elissandro.DsCatalog.services.exceptions.EntityNotFoundException;
+import jakarta.persistence.EntityNotFoundException;
 
 @Service
 public class CategoryService {
@@ -38,5 +38,17 @@ public class CategoryService {
 		entity.setName(dto.getName());
 		entity = repository.save(entity);
 		return new CategoryDTO(entity);
+	}
+	
+	@Transactional
+	public CategoryDTO update(Long id, CategoryDTO dto) {
+		try {
+			Category entity = repository.getReferenceById(id);
+			entity.setName(dto.getName());
+			entity = repository.save(entity);
+			return new CategoryDTO(entity);
+		} catch (EntityNotFoundException e) {
+			throw new EntityNotFoundException("Id not found " + id);
+		}
 	}
 }
