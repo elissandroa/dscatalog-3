@@ -5,14 +5,18 @@ import java.util.ArrayList;
 import java.util.List;
 
 import br.com.elissandro.DsCatalog.entities.User;
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotBlank;
 
 
 public class UserDTO implements Serializable {
 	private static final long serialVersionUID = 1L;
 	
 	private Long id;
+	@NotBlank(message = "Campo requerido")
 	private String firstName;
 	private String lastName;
+	@Email(message = "Favor entrar com um email válido")
 	private String email;
 
 	private List<RoleDTO> roles = new ArrayList<>();
