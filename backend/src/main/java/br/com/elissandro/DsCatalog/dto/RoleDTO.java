@@ -1,30 +1,27 @@
-package br.com.elissandro.DsCatalog.entities;
+package br.com.elissandro.DsCatalog.dto;
 
 import java.io.Serializable;
 import java.util.Objects;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import br.com.elissandro.DsCatalog.entities.Role;
 
-@Entity
-@Table(name = "tb_role")
-public class Role implements Serializable {
+public class RoleDTO implements Serializable {
 	private static final long serialVersionUID = 1L;
-
-	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	
 	private Long id;
 	private String authority;
 	
-	public Role() {
+	public RoleDTO() {
 	}
 
-	public Role(Long id, String authority) {
+	public RoleDTO(Long id, String authority) {
 		this.id = id;
 		this.authority = authority;
+	}
+	
+	public RoleDTO(Role entity) {
+		id = entity.getId();
+		authority = entity.getAuthority();
 	}
 
 	public Long getId() {
@@ -42,14 +39,14 @@ public class Role implements Serializable {
 	public void setAuthority(String authority) {
 		this.authority = authority;
 	}
-
+	
 	@Override
 	public boolean equals(Object o) {
 		if (this == o)
 			return true;
 		if (o == null || getClass() != o.getClass())
 			return false;
-		Role role = (Role) o;
+		RoleDTO role = (RoleDTO) o;
 		return Objects.equals(id, role.id);
 	}
 
