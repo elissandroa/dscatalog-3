@@ -65,9 +65,7 @@ public class ProductServiceTests {
 		when(repository.save(ArgumentMatchers.any())).thenReturn(product);
 
 		when(repository.findAll((Pageable)ArgumentMatchers.any())).thenReturn(Page);
-		
-		when(repository.save(ArgumentMatchers.any())).thenReturn(product);
-		
+	
 		when(repository.getReferenceById(existingId)).thenReturn(product);
 		when(repository.getReferenceById(nonExistingId)).thenThrow(EntityNotFoundException.class);	
 		

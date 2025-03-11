@@ -24,7 +24,6 @@ public class ProductServiceIT {
 	private Long existingId;
 	private Long nonExistingId;
 	private Long countTotalProducts;
-	private ProductDTO productDTO;
 	
 	@Autowired
 	private ProductService service;
@@ -37,9 +36,7 @@ public class ProductServiceIT {
 		existingId = 1L;
 		nonExistingId = 1000L;
 		countTotalProducts = 25L;
-		productDTO = new ProductDTO();
-						
-		}
+	}
 		
 	@Test
 	public void findAllPagedShouldReturnPage() {
