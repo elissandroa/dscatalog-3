@@ -1,12 +1,16 @@
 package br.com.elissandro.DsCatalog.services;
 
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
@@ -14,17 +18,19 @@ import org.springframework.transaction.annotation.Transactional;
 import br.com.elissandro.DsCatalog.dto.UserDTO;
 import br.com.elissandro.DsCatalog.dto.UserInsertDTO;
 import br.com.elissandro.DsCatalog.dto.UserUpdateDTO;
+import br.com.elissandro.DsCatalog.entities.Role;
 import br.com.elissandro.DsCatalog.entities.User;
+import br.com.elissandro.DsCatalog.projections.UserDetailsProjection;
 import br.com.elissandro.DsCatalog.repositories.RoleRepository;
 import br.com.elissandro.DsCatalog.repositories.UserRepository;
 import br.com.elissandro.DsCatalog.services.exceptions.DatabaseException;
 import jakarta.persistence.EntityNotFoundException;
 
 @Service
-public class UserService {
+public class UserService implements UserDetailsService {
 	
 	@Autowired
-	private BCryptPasswordEncoder passwordEncoder;
+	private PasswordEncoder passwordEncoder;
 
 	@Autowired
 	private UserRepository repository;
@@ -49,8 +55,8 @@ public class UserService {
 	@Transactional
 	public UserDTO insert(UserInsertDTO dto) {
 		User entity = new User();
-		copyDtoToEntity(dto, entity);
 		entity.setPassword(passwordEncoder.encode(dto.getPassword()));
+		copyDtoToEntity(dto, entity);
 		entity = repository.save(entity);
 		return new UserDTO(entity);
 	}
@@ -89,5 +95,22 @@ public class UserService {
 		entity.getRoles().addAll(dto.getRoles().stream().map(roleDTO -> roleRepository.getReferenceById(roleDTO.getId()))
 				.toList());
 
+	}
+
+	@Override
+	public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+		List<UserDetailsProjection> result = repository.searchUserAndRolesByEmail(username);
+		if (result.size() == 0) {
+			throw new UsernameNotFoundException("Email not found");
+		}
+		
+		User user = new User();
+		user.setEmail(result.get(0).getUsername());
+		user.setPassword(result.get(0).getPassword());
+		for (UserDetailsProjection projection : result) {
+			user.addRole(new Role(projection.getRoleId(), projection.getAuthority()));
+		}
+		
+		return user;
 	}
 }

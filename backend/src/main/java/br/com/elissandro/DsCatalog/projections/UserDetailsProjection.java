@@ -1,0 +1,8 @@
+package br.com.elissandro.DsCatalog.projections;
+
+public interface UserDetailsProjection {
+	String getUsername();
+	String getPassword();
+	Long getRoleId();
+	String getAuthority();
+}
