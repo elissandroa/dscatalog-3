@@ -6,6 +6,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import java.util.Base64;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.json.JacksonJsonParser;
 import org.springframework.http.HttpHeaders;
 import org.springframework.stereotype.Component;
@@ -17,8 +18,10 @@ import org.springframework.util.MultiValueMap;
 @Component
 public class TokenUtil {
 
+	@Value("${security.client-id}")
 	private String clientId = "myclientid";
 
+	@Value("${security.client-secret}")
 	private String clientSecret = "myclientsecret";
 
 	public String obtainAccessToken(MockMvc mockMvc, String username, String password) throws Exception {
