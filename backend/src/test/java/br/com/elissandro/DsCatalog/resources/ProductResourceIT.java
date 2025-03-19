@@ -20,6 +20,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import br.com.elissandro.DsCatalog.dto.ProductDTO;
 import br.com.elissandro.DsCatalog.tests.Factory;
+import br.com.elissandro.DsCatalog.tests.TokenUtil;
 
 
 
@@ -33,12 +34,19 @@ public class ProductResourceIT {
 	
 	private ProductDTO productDTO;
 	
+	
+	private String username;
+	private String password;
+	private String bearerToken;
+	
+	@Autowired
+	private TokenUtil tokenUtil;
+	
 	@Autowired
 	private MockMvc mockMvc;
 	
 	@Autowired
 	private ObjectMapper objectMapper;
-	
 	
 	
 	@BeforeEach
@@ -48,6 +56,10 @@ public class ProductResourceIT {
 		countTotalProducts = 25L;
 		productDTO = Factory.createProductDTO();
 		productDTO.setId(existingId);
+		username = "maria@gmail.com";
+		password = "123456";
+		
+		bearerToken = tokenUtil.obtainAccessToken(mockMvc, username, password);
 	}
 
 	@Test
@@ -55,7 +67,6 @@ public class ProductResourceIT {
 		ResultActions result =
 				mockMvc.perform(get("/products?page=0&size=12&sort=name,asc")
 						.accept(MediaType.APPLICATION_JSON));
-		
 		result.andExpect(status().isOk());
 		result.andExpect(jsonPath("$.totalElements").value(countTotalProducts));
 		result.andExpect(jsonPath("$.content").exists());	
@@ -73,6 +84,7 @@ public class ProductResourceIT {
 		
 		ResultActions result =
 				mockMvc.perform(put("/products/{id}", existingId)
+						.header("Authorization", "Bearer " + bearerToken)
 						.content(jsonBody)
 						.contentType(MediaType.APPLICATION_JSON)
 						.accept(MediaType.APPLICATION_JSON));
@@ -89,6 +101,7 @@ public class ProductResourceIT {
 		
 		ResultActions result =
 				mockMvc.perform(put("/products/{id}", nonExistingId)
+						.header("Authorization", "Bearer " + bearerToken)
 						.content(jsonBody)
 						.contentType(MediaType.APPLICATION_JSON)
 						.accept(MediaType.APPLICATION_JSON));
@@ -100,8 +113,8 @@ public class ProductResourceIT {
 	public void findByIdShouldReturnProductWhenIdExists() throws Exception {
 		ResultActions result =
 				mockMvc.perform(get("/products/{id}", existingId)
+						.header("Authorization", "Bearer " + bearerToken)
 						.accept(MediaType.APPLICATION_JSON));
-		
 		result.andExpect(status().isOk());
 		result.andExpect(jsonPath("$.id").value(existingId));
 		result.andExpect(jsonPath("$.name").exists());
@@ -112,6 +125,7 @@ public class ProductResourceIT {
 	public void findByIdShouldReturnNotFoundWhenIdDoesNotExist() throws Exception {
 		ResultActions result =
 				mockMvc.perform(get("/products/{id}", nonExistingId)
+						.header("Authorization", "Bearer " + bearerToken)
 						.accept(MediaType.APPLICATION_JSON));
 		
 		result.andExpect(status().isNotFound());
@@ -121,6 +135,7 @@ public class ProductResourceIT {
 	public void deleteShouldReturnNoContentWhenIdExists() throws Exception {
 		ResultActions result =
 				mockMvc.perform(delete("/products/{id}", existingId)
+						.header("Authorization", "Bearer " + bearerToken)
 						.accept(MediaType.APPLICATION_JSON));
 		
 		result.andExpect(status().isNoContent());
@@ -130,6 +145,7 @@ public class ProductResourceIT {
 	public void deleteShouldReturnNotFoundWhenIdDoesNotExist() throws Exception {
 		ResultActions result =
 				mockMvc.perform(delete("/products/{id}", nonExistingId)
+						.header("Authorization", "Bearer " + bearerToken)
 						.accept(MediaType.APPLICATION_JSON));
 		
 		result.andExpect(status().isNotFound());
