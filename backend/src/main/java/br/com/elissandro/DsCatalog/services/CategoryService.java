@@ -1,11 +1,10 @@
 package br.com.elissandro.DsCatalog.services;
 
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
@@ -21,20 +20,20 @@ public class CategoryService {
 
 	@Autowired
 	private CategoryRepository repository;
-	
+
 	@Transactional(readOnly = true)
-	public Page<CategoryDTO> findAllPaged(Pageable pageable) {
-	 Page<Category> list = repository.findAll(pageable);
-	 return list.map(x -> new CategoryDTO(x));
+	public List<CategoryDTO> findAll() {
+		List<Category> list = repository.findAll();
+		return list.stream().map(x -> new CategoryDTO(x)).toList();
 	}
-	
+
 	@Transactional(readOnly = true)
 	public CategoryDTO findByID(Long id) {
 		Optional<Category> obj = repository.findById(id);
 		Category entity = obj.orElseThrow(() -> new EntityNotFoundException("Entity not found"));
 		return new CategoryDTO(entity);
 	}
-	
+
 	@Transactional
 	public CategoryDTO insert(CategoryDTO dto) {
 		Category entity = new Category();
@@ -42,7 +41,7 @@ public class CategoryService {
 		entity = repository.save(entity);
 		return new CategoryDTO(entity);
 	}
-	
+
 	@Transactional
 	public CategoryDTO update(Long id, CategoryDTO dto) {
 		try {
@@ -54,11 +53,11 @@ public class CategoryService {
 			throw new EntityNotFoundException("Id not found " + id);
 		}
 	}
-	
+
 	@Transactional(propagation = Propagation.SUPPORTS)
 	public void delete(Long id) {
-		
-		if(!repository.existsById(id)) {
+
+		if (!repository.existsById(id)) {
 			throw new EntityNotFoundException("Id not found " + id);
 		} else {
 			try {

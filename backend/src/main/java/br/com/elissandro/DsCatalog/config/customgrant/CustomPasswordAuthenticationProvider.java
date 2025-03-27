@@ -57,6 +57,7 @@ public class CustomPasswordAuthenticationProvider implements AuthenticationProvi
 		this.passwordEncoder = passwordEncoder;
 	}
 	
+	@SuppressWarnings("null")
 	@Override
 	public Authentication authenticate(Authentication authentication) throws AuthenticationException {
 		

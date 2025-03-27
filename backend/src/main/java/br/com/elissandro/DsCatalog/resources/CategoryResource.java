@@ -1,10 +1,9 @@
 package br.com.elissandro.DsCatalog.resources;
 
 import java.net.URI;
+import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -28,9 +27,8 @@ public class CategoryResource {
 	private CategoryService service;
 
 	@GetMapping
-	public ResponseEntity<Page<CategoryDTO>> findAll(Pageable pageable){
-		
-		Page<CategoryDTO> cat = service.findAllPaged(pageable);
+	public ResponseEntity<List<CategoryDTO>> findAll(){
+		List<CategoryDTO> cat = service.findAll();
 		return ResponseEntity.ok().body(cat);
 	}
 	

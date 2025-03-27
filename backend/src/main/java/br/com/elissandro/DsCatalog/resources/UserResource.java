@@ -29,6 +29,14 @@ public class UserResource {
 	
 	@Autowired
 	private UserService service;
+	
+	@PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_OPERATOR')")
+	@GetMapping(value = "/me")
+	public ResponseEntity<UserDTO> findMe(){
+		UserDTO dto = service.findMe();
+		return ResponseEntity.ok().body(dto);
+	}
+
 
 	@PreAuthorize("hasAnyRole('ROLE_ADMIN')")
 	@GetMapping
@@ -43,6 +51,7 @@ public class UserResource {
 		UserDTO cat = service.findByID(id);
 		return ResponseEntity.ok().body(cat);	
 	}
+	
 	
 	@PreAuthorize("hasAnyRole('ROLE_ADMIN')")
 	@PostMapping
